@@ -30,21 +30,36 @@ class Capital:
         if not entity:
             raise 'not found'
 
-        output = dict()
-        location = {}
-
-        if len(list(query.fetch())) == 0:
+        results = query.fetch()
+        if len(results) == 0:
             raise 'not found'
 
-        for entity in list(query.fetch()):
-            output['id'] = id
-            output['name'] = entity['name']
-            output['countryCode'] = entity['countryCode']
-            output['country'] = entity['country']
-            output['continent'] = entity['continent']
-            output['location'] = location
-            location['latitude'] = entity['location.latitude']
-            location['longitude'] = entity['location.longitude']
+        for entity in list(results):
+            output = self.__transform(id, entity)
             return output
 
+    def get_all(self):
+        query = self.ds.query(kind=self.kind)
 
+        results = list()
+        for entity in list(query.fetch()):
+            id = entity['id']
+            results.append(self.__transform(id, entity))
+        return results
+
+    def delete(self, id):
+        key = self.ds.key(self.kind, id)
+        self.ds.delete(key)
+
+    def __transform(self, id, entity):
+        output = dict()
+        location = {}
+        output['id'] = id
+        output['name'] = entity['name']
+        output['countryCode'] = entity['countryCode']
+        output['country'] = entity['country']
+        output['continent'] = entity['continent']
+        output['location'] = location
+        location['latitude'] = entity['location.latitude']
+        location['longitude'] = entity['location.longitude']
+        return output;

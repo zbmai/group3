@@ -23,14 +23,23 @@ def get_status():
     status = dict()
     status['insert'] = True
     status['fetch'] = True
-    status['delete'] = False
-    status['list'] = False
+    status['delete'] = True
+    status['list'] = True
     return json.dumps(status), 200
 
 
 @app.route('/api/capitals/<id>', methods=['DELETE'])
 def delete(id):
-    return 'Not done yet', 400
+    if not id:
+        server_error('Unexpected error')
+        return
+
+    capital = Capital()
+    try:
+        capital.delete(id)
+        return "Capital object delete status", 200
+    except Exception as ex:
+        return not_found_error('Capital record not found')
 
 @app.route('/api/capitals/<id>', methods=['GET'])
 def get(id):
@@ -57,8 +66,12 @@ def insert(id):
 
 @app.route('/api/capitals', methods=['GET'])
 def get_all():
-    return 'Not done yet', 400
-
+    capital = Capital()
+    try:
+        output = capital.get_all()
+        return json.dumps(output), 200
+    except Exception as ex:
+        return not_found_error('Capital not found')
 
 @app.errorhandler(404)
 def not_found_error(err):
