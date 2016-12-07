@@ -8,6 +8,7 @@ from flask import Flask, request
 from flask import jsonify
 import utility
 
+from capital import Capital
 
 app = Flask(__name__)
 
@@ -20,8 +21,8 @@ def hello_world():
 @app.route('/api/status', methods=['GET'])
 def get_status():
     status = dict()
-    status['insert'] = False
-    status['fetch'] = False
+    status['insert'] = True
+    status['fetch'] = True
     status['delete'] = False
     status['list'] = False
     return json.dumps(status), 200
@@ -33,15 +34,40 @@ def delete(id):
 
 @app.route('/api/capitals/<id>', methods=['GET'])
 def get(id):
-    return 'Not done yet', 400
+    if not id:
+        server_error('Unexpected error')
+        return
+
+    capital = Capital()
+    try:
+        output = capital.get(id)
+        return json.dumps(output), 200
+    except Exception as ex:
+        return not_found_error('Capital not found')
 
 @app.route('/api/capitals/<id>', methods=['PUT'])
 def insert(id):
-    return 'Not done yet', 400
+    if not id:
+        return server_error('Unexpected error')
+
+    capital = Capital()
+    input = request.get_json()
+    capital.insert(id, input)
+    return 'Successfully stored the capital', 200
 
 @app.route('/api/capitals', methods=['GET'])
 def get_all():
     return 'Not done yet', 400
+
+
+@app.errorhandler(404)
+def not_found_error(err):
+    """Error handler"""
+    logging.exception('An error occurred during a request.')
+    return """
+    An internal error occurred: <pre>{}</pre>
+    See logs for full stacktrace.
+    """.format(err), 404
 
 @app.errorhandler(500)
 def server_error(err):
