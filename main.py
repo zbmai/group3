@@ -17,6 +17,32 @@ def hello_world():
     """hello world"""
     return 'Hello World!'
 
+@app.route('/api/status', methods=['GET'])
+def get_status():
+    status = dict()
+    status['insert'] = False
+    status['fetch'] = False
+    status['delete'] = False
+    status['list'] = False
+    return json.dumps(status), 200
+
+
+@app.route('/api/capitals/<id>', methods=['DELETE'])
+def delete(id):
+    return 'Not done yet', 400
+
+@app.route('/api/capitals/<id>', methods=['GET'])
+def get(id):
+    return 'Not done yet', 400
+
+@app.route('/api/capitals/<id>', methods=['PUT'])
+def insert(id):
+    return 'Not done yet', 400
+
+@app.route('/api/capitals', methods=['GET'])
+def get_all():
+    return 'Not done yet', 400
+
 @app.errorhandler(500)
 def server_error(err):
     """Error handler"""
