@@ -1,0 +1,5 @@
+flask
+flask-cors
+gunicorn==19.6.0
+oauth2client==2.0.0
+google-cloud
