@@ -30,7 +30,7 @@ class Capital:
         if not entity:
             raise 'not found'
 
-        results = query.fetch()
+        results = list(query.fetch())
         if len(results) == 0:
             raise 'not found'
 
@@ -48,8 +48,10 @@ class Capital:
         return results
 
     def delete(self, id):
+        entity = self.get(id)
         key = self.ds.key(self.kind, id)
         self.ds.delete(key)
+
 
     def __transform(self, id, entity):
         output = dict()
