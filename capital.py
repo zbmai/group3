@@ -28,11 +28,11 @@ class Capital:
         entity = query.fetch()
 
         if not entity:
-            raise 'not found'
+            raise Exception('not found')
 
         results = list(query.fetch())
         if len(results) == 0:
-            raise 'not found'
+            raise Exception('not found')
 
         for entity in list(results):
             output = self.__transform(id, entity)

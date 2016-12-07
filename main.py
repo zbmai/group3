@@ -59,10 +59,13 @@ def insert(id):
     if not id:
         return server_error('Unexpected error')
 
-    capital = Capital()
-    input = request.get_json()
-    capital.insert(id, input)
-    return 'Successfully stored the capital', 200
+    try:
+        capital = Capital()
+        input = request.get_json()
+        capital.insert(id, input)
+        return 'Successfully stored the capital', 200
+    except Exception as ex:
+        return server_error('Unexpected error')
 
 @app.route('/api/capitals', methods=['GET'])
 def get_all():
