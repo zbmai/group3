@@ -18,12 +18,15 @@ storage = Storage()
 client = pubsub.Client()
 
 @app.route('/')
-def hello_world():
+@app.route('/map')
+def show_map():
     # !/usr/bin/env python
     page = """
     <!DOCTYPE html>
 <html>
   <head>
+    <title>Team 3 Google Maps</title>
+    <meta content="text/html; charset="UTF-8">
     <style>
        #map {
         height: 600px;
@@ -32,7 +35,7 @@ def hello_world():
     </style>
   </head>
   <body>
-    <h3>Team 3 Google Maps Demo</h3>
+    <h3>Team 3 Google Maps</h3>
     <div id="map"></div>
     <script>
       function initMap() {
@@ -69,7 +72,25 @@ def hello_world():
     </script>
   </body>
 </html>"""
-    return page
+    return page, 200
+
+@app.route('/countries')
+def list_countries():
+    page = """
+        <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Team 3 Countries/Capitals</title>
+        <meta content="text/html; charset="UTF-8">
+      </head>
+      <body>
+        <h3>Team 3 Countries/Capitals</h3>"""
+    for entity in capital.get_all_countries():
+        page += '<br>' + entity['country'] + ', ' + entity['name']
+    page += """
+      </body>
+    </html>"""
+    return page, 200
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
