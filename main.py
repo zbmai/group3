@@ -2,6 +2,8 @@
 
 import json
 import logging
+import urlparse
+from google.cloud import pubsub
 
 from flask import Flask, request, jsonify
 
@@ -22,6 +24,10 @@ def get_status():
     status['fetch'] = True
     status['delete'] = True
     status['list'] = True
+    status['query'] = True
+    status['search'] = False
+    status['pubsub'] = False
+    status['storage'] = False
     return jsonify(status), 200
 
 
@@ -62,12 +68,32 @@ def insert(id):
         return server_error('Unexpected error')
 
 @app.route('/api/capitals', methods=['GET'])
+def query():
+    url = request.url
+    par = urlparse.parse_qs(urlparse.urlparse(url).query)
+    values = par.get('query', None)
+    if values:
+        value = values[0]
+        pair = value.split(':')
+        try:
+            output = capital.query(pair[0], pair[1])
+            return jsonify(output), 200
+        except Exception as ex:
+            return not_found_error('Capital not found')
+    else:
+        return get_all()
+
 def get_all():
     try:
         output = capital.get_all()
         return jsonify(output), 200
     except Exception as ex:
         return not_found_error('Capital not found')
+
+@app.route('/api/capitals/{id}/publish', methods=['POST'])
+def publish(id):
+    print id
+
 
 def ok_message(msg):
     okMessage = {}

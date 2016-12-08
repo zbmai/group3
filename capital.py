@@ -38,9 +38,18 @@ class Capital:
             output = self.__transform(id, entity)
             return output
 
+    def query(self, key, value):
+        query = self.ds.query(kind=self.kind)
+        query.add_filter(key, '=', value)
+        results = list()
+        for entity in list(query.fetch()):
+            id = entity['id']
+            results.append(self.__transform(id, entity))
+        print results
+        return results
+
     def get_all(self):
         query = self.ds.query(kind=self.kind)
-
         results = list()
         for entity in list(query.fetch()):
             id = entity['id']
