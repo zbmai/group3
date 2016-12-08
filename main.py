@@ -107,6 +107,8 @@ def publish(id):
        topicName = input['topic']
        client = pubsub.Client()
        topic = client.topic(topicName)
+       if not topic.exists():
+           topic.create()
 
        if topic.exists():
            text = json.dumps(entity)
