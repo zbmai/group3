@@ -10,6 +10,7 @@ from flask import Flask, request, jsonify
 from capital import Capital
 from cloudstorage import Storage
 import base64
+import utility
 
 app = Flask(__name__)
 capital = Capital()
@@ -104,11 +105,11 @@ def publish(id):
 
    try:
        input = request.get_json()
-       topicName = input['topic']
+       topicName = input['topic'].split('/')[-1]
+       utility.log_info(topicName)
        client = pubsub.Client()
        topic = client.topic(topicName)
-       if not topic.exists():
-           topic.create()
+
 
        if topic.exists():
            text = json.dumps(entity)
