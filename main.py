@@ -8,9 +8,14 @@ from google.cloud import pubsub
 from flask import Flask, request, jsonify
 
 from capital import Capital
+from cloudstorage import Storage
+import tempfile
+from os.path import join
 
 app = Flask(__name__)
 capital = Capital()
+storage = Storage()
+client = pubsub.Client()
 
 @app.route('/')
 def hello_world():
@@ -91,8 +96,43 @@ def query():
 
 @app.route('/api/capitals/{id}/publish', methods=['POST'])
 def publish(id):
-    print id
+    if not id:
+        return server_error('Unexpected error')
 
+    try:
+        input = request.get_json()
+        topicName = input['topic']
+        return server_error('Unexpected error')
+    except Exception as ex:
+        return server_error('Unexpected error')
+
+@app.route('/api/capitals/{id}/store', methods=['POST'])
+def store(id):
+    if not id:
+        return server_error('Unexpected error')
+
+    try:
+        entity = capital.get(id)
+    except Exception as ex:
+        return not_found_error('Capital record not found')
+
+    try:
+        input = request.get_json()
+        bucketName = input['bucket']
+        if not storage.check_bucket(bucketName):
+            ok = storage.create_bucket(bucketName)
+            if not ok:
+                return server_error('Unexpected error')
+
+        tmp_file = id
+        with open(tmp_file, 'w') as fp:
+            json.dump(entity, fp, indent=4)
+        storage.store_file_to_gcs(bucketName,tmp_file)
+    except Exception as ex:
+        return server_error('Unexpected error')
+
+def get_topic(topicName):
+    return None
 
 def ok_message(msg):
     okMessage = {}
