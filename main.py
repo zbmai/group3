@@ -1,17 +1,14 @@
 """Main Entrypoint for the Application"""
 
-import logging
 import json
-import base64
+import logging
 
 from flask import Flask, request
-from flask import jsonify
-import utility
 
 from capital import Capital
 
 app = Flask(__name__)
-
+capital = Capital()
 
 @app.route('/')
 def hello_world():
@@ -34,7 +31,6 @@ def delete(id):
         server_error('Unexpected error')
         return
 
-    capital = Capital()
     try:
         capital.delete(id)
         return "Capital object delete status", 200
@@ -47,7 +43,6 @@ def get(id):
         server_error('Unexpected error')
         return
 
-    capital = Capital()
     try:
         output = capital.get(id)
         return json.dumps(output), 200
@@ -60,7 +55,6 @@ def insert(id):
         return server_error('Unexpected error')
 
     try:
-        capital = Capital()
         input = request.get_json()
         capital.insert(id, input)
         return 'Successfully stored the capital', 200
@@ -69,7 +63,6 @@ def insert(id):
 
 @app.route('/api/capitals', methods=['GET'])
 def get_all():
-    capital = Capital()
     try:
         output = capital.get_all()
         return json.dumps(output), 200
