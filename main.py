@@ -3,7 +3,7 @@
 import json
 import logging
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 from capital import Capital
 
@@ -22,7 +22,7 @@ def get_status():
     status['fetch'] = True
     status['delete'] = True
     status['list'] = True
-    return json.dumps(status), 200
+    return jsonify(status), 200
 
 
 @app.route('/api/capitals/<id>', methods=['DELETE'])
@@ -45,7 +45,7 @@ def get(id):
 
     try:
         output = capital.get(id)
-        return json.dumps(output), 200
+        return jsonify(output), 200
     except Exception as ex:
         return not_found_error('Capital not found')
 
@@ -65,7 +65,7 @@ def insert(id):
 def get_all():
     try:
         output = capital.get_all()
-        return json.dumps(output), 200
+        return jsonify(output), 200
     except Exception as ex:
         return not_found_error('Capital not found')
 
