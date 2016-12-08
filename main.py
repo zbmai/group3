@@ -33,7 +33,7 @@ def delete(id):
 
     try:
         capital.delete(id)
-        return "Capital object delete status", 200
+        return ok_message("Capital object delete status")
     except Exception as ex:
         return not_found_error('Capital record not found')
 
@@ -57,7 +57,7 @@ def insert(id):
     try:
         input = request.get_json()
         capital.insert(id, input)
-        return 'Successfully stored the capital', 200
+        return ok_message('Successfully stored the capital')
     except Exception as ex:
         return server_error('Unexpected error')
 
@@ -69,23 +69,29 @@ def get_all():
     except Exception as ex:
         return not_found_error('Capital not found')
 
+def ok_message(msg):
+    okMessage = {}
+    okMessage['code'] = 200
+    okMessage['message'] = msg
+    return jsonify(okMessage), 200
+
 @app.errorhandler(404)
 def not_found_error(err):
     """Error handler"""
-    logging.exception('An error occurred during a request.')
-    return """
-    An internal error occurred: <pre>{}</pre>
-    See logs for full stacktrace.
-    """.format(err), 404
+    logging.exception('An error occurred during a request - {}'.format(err))
+    errorMessage={}
+    errorMessage['code'] = 404
+    errorMessage['message'] = err
+    return jsonify(errorMessage), 404
 
 @app.errorhandler(500)
 def server_error(err):
     """Error handler"""
-    logging.exception('An error occurred during a request.')
-    return """
-    An internal error occurred: <pre>{}</pre>
-    See logs for full stacktrace.
-    """.format(err), 500
+    logging.exception('An error occurred during a request - {}'.format(err))
+    errorMessage = {}
+    errorMessage['code'] = 500
+    errorMessage['message'] = err
+    return jsonify(errorMessage), 500
 
 
 if __name__ == '__main__':
