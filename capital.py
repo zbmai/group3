@@ -62,6 +62,13 @@ class Capital:
             results.append(self.__transform(entity))
         return results
 
+    def get_all_max20(self):
+        query = self.ds.query(kind=self.kind)
+        results = list()
+        for entity in list(query.fetch()):
+            results.append(self.__transform(entity))
+        return results[:20]
+
     def delete(self, id):
         entity = self.get(id)
         key = self.ds.key(self.kind, id)

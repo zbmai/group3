@@ -19,8 +19,57 @@ client = pubsub.Client()
 
 @app.route('/')
 def hello_world():
-    """hello world"""
-    return 'Hello World!'
+    # !/usr/bin/env python
+    page = """
+    <!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       #map {
+        height: 600px;
+        width: 100%;
+       }
+    </style>
+  </head>
+  <body>
+    <h3>Team 3 Google Maps Demo</h3>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        var uluru = {lat: 29.7604, lng: -95.3698};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 3,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+        """;
+    for entity in capital.get_all():
+        location=entity.get('location', None)
+        if not location:
+            continue
+        lat = location['latitude']
+        lng = location['longitude']
+        latlng = 'luru = {lat: ' + str(lat) + ', lng: '+ str(lng) +'};'
+        print latlng
+        page += latlng
+        page += """
+        var marker = new google.maps.Marker({
+          position: luru,
+          map: map
+        });"""
+
+    page += """
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-q7BKDHIqlgzpmFVbCHatjxeMLTJUBQ&callback=initMap">
+    </script>
+  </body>
+</html>"""
+    return page
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
@@ -88,7 +137,7 @@ def query():
             value = search[0]
             output = capital.search(value)
         else:
-            output = capital.get_all()
+            output = capital.get_all_max20()
         return jsonify(output), 200
     except Exception as ex:
         return not_found_error('Capital not found')
