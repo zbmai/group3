@@ -31,7 +31,7 @@ def get_status():
     status['list'] = True
     status['query'] = True
     status['search'] = True
-    status['pubsub'] = False
+    status['pubsub'] = True
     status['storage'] = True
     return jsonify(status), 200
 
@@ -95,15 +95,27 @@ def query():
 
 @app.route('/api/capitals/<id>/publish', methods=['POST'])
 def publish(id):
-    if not id:
-        return server_error('Unexpected error')
+   if not id:
+       return server_error('Unexpected error')
 
-    try:
-        input = request.get_json()
-        topicName = input['topic']
-        return server_error('Unexpected error')
-    except Exception as ex:
-        return server_error('Unexpected error')
+   try:
+       entity = capital.get(int(id))
+   except Exception:
+       return not_found_error('Capital record not found')
+
+   try:
+       input = request.get_json()
+       topicName = input['topic']
+       client = pubsub.Client()
+       topic = client.topic(topicName)
+       if topic.exists():
+           text = json.dumps(entity)
+           topic.publish(text)
+           return ok_message('Successfully published to topic')
+       else:
+           return not_found_error('Topic does not exist')
+   except Exception as ex:
+       return server_error('Unexpected error')
 
 @app.route('/api/capitals/<id>/store', methods=['POST'])
 def store(id):
