@@ -43,7 +43,7 @@ def delete(id):
         return
 
     try:
-        capital.delete(id)
+        capital.delete(int(id))
         return ok_message("Capital object delete status")
     except Exception as ex:
         return not_found_error('Capital record not found')
@@ -53,9 +53,8 @@ def get(id):
     if not id:
         server_error('Unexpected error')
         return
-
     try:
-        output = capital.get(id)
+        output = capital.get(int(id))
         return jsonify(output), 200
     except Exception as ex:
         return not_found_error('Capital not found')
@@ -67,7 +66,7 @@ def insert(id):
 
     try:
         input = request.get_json()
-        capital.insert(id, input)
+        capital.insert(int(id), input)
         return ok_message('Successfully stored the capital')
     except Exception as ex:
         return server_error('Unexpected error')
@@ -112,7 +111,7 @@ def store(id):
         return server_error('Unexpected error')
 
     try:
-        entity = capital.get(id)
+        entity = capital.get(int(id))
     except Exception:
         return not_found_error('Capital record not found')
 

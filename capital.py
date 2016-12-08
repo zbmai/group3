@@ -35,7 +35,7 @@ class Capital:
             raise Exception('not found')
 
         for entity in list(results):
-            output = self.__transform(id, entity)
+            output = self.__transform(entity, id)
             return output
 
     def query(self, key, value):
@@ -43,8 +43,7 @@ class Capital:
         query.add_filter(key, '=', value)
         results = list()
         for entity in list(query.fetch()):
-            id = entity['id']
-            results.append(self.__transform(id, entity))
+            results.append(self.__transform(entity))
         return results
 
     def search(self, value):
@@ -60,8 +59,7 @@ class Capital:
         query = self.ds.query(kind=self.kind)
         results = list()
         for entity in list(query.fetch()):
-            id = entity['id']
-            results.append(self.__transform(id, entity))
+            results.append(self.__transform(entity))
         return results
 
     def delete(self, id):
@@ -70,10 +68,13 @@ class Capital:
         self.ds.delete(key)
 
 
-    def __transform(self, id, entity):
+    def __transform(self, entity, id=None):
         output = dict()
         location = {}
-        output['id'] = id
+        if id:
+            output['id'] = id
+        else:
+            output['id'] = entity['id']
         output['name'] = entity['name']
         output['countryCode'] = entity['countryCode']
         output['country'] = entity['country']
