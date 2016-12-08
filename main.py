@@ -32,7 +32,7 @@ def get_status():
     status['query'] = True
     status['search'] = True
     status['pubsub'] = False
-    status['storage'] = False
+    status['storage'] = True
     return jsonify(status), 200
 
 
@@ -94,7 +94,7 @@ def query():
     except Exception as ex:
         return not_found_error('Capital not found')
 
-@app.route('/api/capitals/{id}/publish', methods=['POST'])
+@app.route('/api/capitals/<id>/publish', methods=['POST'])
 def publish(id):
     if not id:
         return server_error('Unexpected error')
@@ -106,14 +106,14 @@ def publish(id):
     except Exception as ex:
         return server_error('Unexpected error')
 
-@app.route('/api/capitals/{id}/store', methods=['POST'])
+@app.route('/api/capitals/<id>/store', methods=['POST'])
 def store(id):
     if not id:
         return server_error('Unexpected error')
 
     try:
         entity = capital.get(id)
-    except Exception as ex:
+    except Exception:
         return not_found_error('Capital record not found')
 
     try:
@@ -124,10 +124,10 @@ def store(id):
             if not ok:
                 return server_error('Unexpected error')
 
-        tmp_file = id
-        with open(tmp_file, 'w') as fp:
-            json.dump(entity, fp, indent=4)
-        storage.store_file_to_gcs(bucketName,tmp_file)
+        if storage.store_file_to_gcs(bucketName,id, entity):
+            return ok_message('Successfully stored in GCS')
+        else:
+            return not_found_error('Capital records not found')
     except Exception as ex:
         return server_error('Unexpected error')
 

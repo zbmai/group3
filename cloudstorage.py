@@ -1,5 +1,6 @@
 from google.cloud import storage, exceptions
 from google.cloud.storage import Blob
+import json
 
 
 class Storage:
@@ -35,18 +36,18 @@ class Storage:
                 return None
         return bucket_exists
 
-    def store_file_to_gcs(self, bucket_name, filename):
+    def store_file_to_gcs(self, bucket_name, filename, entity):
 
         if self.check_bucket(bucket_name):
             bucket = self.gcs.get_bucket(bucket_name)
             blob = Blob(filename, bucket)
 
             try:
-                with open(filename, 'rb') as input_file:
-                    blob.upload_from_file(input_file)
+                text = json.dumps(entity)
+                blob.upload_from_string(text, content_type='text/plain')
                 return True
-            except IOError:
-                print ('Error: Cannot find the file {}'.format(filename))
+            except Exception as ex:
+                print ('Error: Cannot find the file {} - {}'.format(filename, ex.message))
         return False
 
     def fetch_object_from_gcs(self, bucket_name, fileobject):
