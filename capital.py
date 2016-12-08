@@ -45,7 +45,15 @@ class Capital:
         for entity in list(query.fetch()):
             id = entity['id']
             results.append(self.__transform(id, entity))
-        print results
+        return results
+
+    def search(self, value):
+        keys=['id','name','countryCode','country','continent']
+        results=list()
+        for key in keys:
+            sub= self.query(key, value)
+            for res in sub:
+                results.append(res)
         return results
 
     def get_all(self):

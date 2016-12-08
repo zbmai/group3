@@ -25,7 +25,7 @@ def get_status():
     status['delete'] = True
     status['list'] = True
     status['query'] = True
-    status['search'] = False
+    status['search'] = True
     status['pubsub'] = False
     status['storage'] = False
     return jsonify(status), 200
@@ -71,12 +71,22 @@ def insert(id):
 def query():
     url = request.url
     par = urlparse.parse_qs(urlparse.urlparse(url).query)
-    values = par.get('query', None)
-    if values:
-        value = values[0]
-        pair = value.split(':')
+    query = par.get('query', None)
+    search = par.get('search', None)
+    if query:
+        first = query[0]
+        pair = first.split(':')
+        key = pair[0]
+        value = pair[1]
         try:
-            output = capital.query(pair[0], pair[1])
+            output = capital.query(key, value)
+            return jsonify(output), 200
+        except Exception as ex:
+            return not_found_error('Capital not found')
+    elif search:
+        value = search[0]
+        try:
+            output = capital.search(value)
             return jsonify(output), 200
         except Exception as ex:
             return not_found_error('Capital not found')
