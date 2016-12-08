@@ -111,8 +111,6 @@ def publish(id):
            projectName = part[1]
        else:
            projectName = 'hackathon-team-003'
-       print projectName
-       print topicName
        utility.log_info(topicName)
        client = pubsub.Client(project=projectName)
        topic = client.topic(topicName)
@@ -120,7 +118,7 @@ def publish(id):
 
        if topic.exists():
            text = json.dumps(entity)
-           encoded = base64.b64encode(text)
+           encoded = text.encode('utf-8')
            messageid = topic.publish(encoded)
            res = {}
            res['messageId'] = int(messageid)
