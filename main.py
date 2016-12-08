@@ -9,8 +9,7 @@ from flask import Flask, request, jsonify
 
 from capital import Capital
 from cloudstorage import Storage
-import tempfile
-from os.path import join
+import base64
 
 app = Flask(__name__)
 capital = Capital()
@@ -108,10 +107,14 @@ def publish(id):
        topicName = input['topic']
        client = pubsub.Client()
        topic = client.topic(topicName)
+
        if topic.exists():
            text = json.dumps(entity)
-           topic.publish(text)
-           return ok_message('Successfully published to topic')
+           encoded = base64.b64encode(text)
+           messageid = topic.publish(encoded)
+           res = {}
+           res['messageId'] = int(messageid)
+           return jsonify(res), 200
        else:
            return not_found_error('Topic does not exist')
    except Exception as ex:
