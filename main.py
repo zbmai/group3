@@ -73,29 +73,18 @@ def query():
     par = urlparse.parse_qs(urlparse.urlparse(url).query)
     query = par.get('query', None)
     search = par.get('search', None)
-    if query:
-        first = query[0]
-        pair = first.split(':')
-        key = pair[0]
-        value = pair[1]
-        try:
-            output = capital.query(key, value)
-            return jsonify(output), 200
-        except Exception as ex:
-            return not_found_error('Capital not found')
-    elif search:
-        value = search[0]
-        try:
-            output = capital.search(value)
-            return jsonify(output), 200
-        except Exception as ex:
-            return not_found_error('Capital not found')
-    else:
-        return get_all()
-
-def get_all():
     try:
-        output = capital.get_all()
+        if query:
+            first = query[0]
+            pair = first.split(':')
+            key = pair[0]
+            value = pair[1]
+            output = capital.query(key, value)
+        elif search:
+            value = search[0]
+            output = capital.search(value)
+        else:
+            output = capital.get_all()
         return jsonify(output), 200
     except Exception as ex:
         return not_found_error('Capital not found')
