@@ -44,21 +44,20 @@ def show_map():
           zoom: 3,
           center: uluru
         });
-        """;
+        """
     for entity in capital.get_all():
         location=entity.get('location', None)
         if not location:
             continue
         lat = location['latitude']
         lng = location['longitude']
-        latlng = 'luru = {lat: ' + str(lat) + ', lng: '+ str(lng) +'};'
-        print latlng
-        page += latlng
+        page += 'var luru = {lat: ' + str(lat) + ', lng: '+ str(lng) +'};'
         page += """
         var marker = new google.maps.Marker({
           position: luru,
           map: map
-        });"""
+        });
+        """
 
     page += """
       }
