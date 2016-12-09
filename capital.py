@@ -63,13 +63,10 @@ class Capital:
         return results
 
     def get_all_countries(self):
-        query = self.ds.query(kind=self.kind)
+        query = self.ds.query(kind=self.kind, order=['country'], distinct_on=['country'])
         results = list()
-        resultset = {}
         for entity in list(query.fetch()):
-            resultset[entity['country']] = entity
-        for key in sorted(resultset):
-            results.append(resultset[key])
+            results.append(self.__transform(entity))
         return results
 
     def get_all_max20(self):
