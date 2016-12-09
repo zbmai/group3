@@ -1,0 +1,19 @@
+<!doctype html>
+
+<html>
+<head>
+  <title>GMapsCaptals</title>
+  <script src="{{ url_for('static', filename='bower_components/webcomponentsjs/webcomponents-lite.min.js') }}">
+  <link rel="import" href="{{ url_for('static', filename='bower_components/google-map/google-map.html') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body unresolved>
+  <google-map fit-to-markers
+      api-key="AIzaSyCkeSu8Q0-6jGwCXsvIIa8uqrnMTyXrZkI">
+      <google-map-marker latitude="37.77493" longitude="-122.41"
+      title="Go Giants!" draggable="true"></google-map-marker>
+      <google-map-marker latitude="29.8174782" longitude="-95.6814767"
+      title="ttt" draggable="true"></google-map-marker>
+  </google-map>
+</body>
+</html>

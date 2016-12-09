@@ -21,6 +21,11 @@ def show_map():
     results = capital.get_all()
     return render_template('map.html', comment=None, results=results)
 
+@app.route('/polymer', methods=['GET'])
+def show_polymer_map():
+    results = capital.get_all()
+    return render_template('polymer_maps.html', comment=None, results=results)
+
 @app.route('/countries', methods=['GET'])
 def list_countries():
     results = capital.get_all_countries()
