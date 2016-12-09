@@ -44,10 +44,6 @@ def show_map():
           zoom: 3,
           center: uluru
         });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
         """;
     for entity in capital.get_all():
         location=entity.get('location', None)
