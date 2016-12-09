@@ -44,37 +44,37 @@ def get_status():
     status['storage'] = True
     return jsonify(status), 200
 
-@app.route('/api/capitals/<id>', methods=['DELETE'])
+@app.route('/api/capitals/<int:id>', methods=['DELETE'])
 def delete(id):
     if not id:
         server_error('Unexpected error')
         return
 
     try:
-        capital.delete(int(id))
+        capital.delete(id)
         return ok_message("Capital object delete status")
     except Exception as ex:
         return not_found_error('Capital record not found')
 
-@app.route('/api/capitals/<id>', methods=['GET'])
+@app.route('/api/capitals/<int:id>', methods=['GET'])
 def get(id):
     if not id:
         server_error('Unexpected error')
         return
     try:
-        output = capital.get(int(id))
+        output = capital.get(id)
         return jsonify(output), 200
     except Exception as ex:
         return not_found_error('Capital not found')
 
-@app.route('/api/capitals/<id>', methods=['PUT'])
+@app.route('/api/capitals/<int:id>', methods=['PUT'])
 def insert(id):
     if not id:
         return server_error('Unexpected error')
 
     try:
         input = request.get_json()
-        capital.insert(int(id), input)
+        capital.insert(id, input)
         return ok_message('Successfully stored the capital')
     except Exception as ex:
         return server_error('Unexpected error')
@@ -101,13 +101,13 @@ def query():
     except Exception as ex:
         return not_found_error('Capital not found')
 
-@app.route('/api/capitals/<id>/publish', methods=['POST'])
+@app.route('/api/capitals/<int:id>/publish', methods=['POST'])
 def publish(id):
    if not id:
        return server_error('Unexpected error')
 
    try:
-       entity = capital.get(int(id))
+       entity = capital.get(id)
    except Exception:
        return not_found_error('Capital record not found')
 
@@ -134,13 +134,13 @@ def publish(id):
    except Exception as ex:
        return server_error('Unexpected error')
 
-@app.route('/api/capitals/<id>/store', methods=['POST'])
+@app.route('/api/capitals/<int:id>/store', methods=['POST'])
 def store(id):
     if not id:
         return server_error('Unexpected error')
 
     try:
-        entity = capital.get(int(id))
+        entity = capital.get(id)
     except Exception:
         return not_found_error('Capital record not found')
 
