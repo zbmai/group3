@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team 3 Google Maps</title>
+    <style>
+       #map {
+        height: 700px;
+        width: 100%;
+       }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+    <script>
+      function initMap() {
+        var uluru = {lat: 29.7604, lng: -95.3698};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 3,
+          center: uluru
+        });
+        {% if results %}
+            {% for result in results %}
+                {% if result.location %}
+        var luru = {lat: {{result.location.latitude}}, lng: {{result.location.longitude}}};
+        var marker = new google.maps.Marker({
+          position: luru,
+          map: map
+        });
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-q7BKDHIqlgzpmFVbCHatjxeMLTJUBQ&callback=initMap">
+    </script>
+</body>
+</html>

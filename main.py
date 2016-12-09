@@ -4,12 +4,9 @@ import json
 import logging
 import urlparse
 from google.cloud import pubsub
-
-from flask import Flask, request, jsonify
-
+from flask import Flask, request, jsonify, render_template
 from capital import Capital
 from cloudstorage import Storage
-import base64
 import utility
 
 app = Flask(__name__)
@@ -17,75 +14,17 @@ capital = Capital()
 storage = Storage()
 client = pubsub.Client()
 
-@app.route('/')
-@app.route('/map')
+
+@app.route('/', methods=['GET'])
+@app.route('/map', methods=['GET'])
 def show_map():
-    # !/usr/bin/env python
-    page = """
-    <!DOCTYPE html>
-<html>
-  <head>
-    <title>Team 3 Google Maps</title>
-    <meta content="text/html; charset="UTF-8">
-    <style>
-       #map {
-        height: 600px;
-        width: 100%;
-       }
-    </style>
-  </head>
-  <body>
-    <h3>Team 3 Google Maps</h3>
-    <div id="map"></div>
-    <script>
-      function initMap() {
-        var uluru = {lat: 29.7604, lng: -95.3698};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 3,
-          center: uluru
-        });
-        """
-    for entity in capital.get_all():
-        location=entity.get('location', None)
-        if not location:
-            continue
-        lat = location['latitude']
-        lng = location['longitude']
-        page += 'var luru = {lat: ' + str(lat) + ', lng: '+ str(lng) +'};'
-        page += """
-        var marker = new google.maps.Marker({
-          position: luru,
-          map: map
-        });
-        """
+    results = capital.get_all()
+    return render_template('map.html', comment=None, results=results)
 
-    page += """
-      }
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCd-q7BKDHIqlgzpmFVbCHatjxeMLTJUBQ&callback=initMap">
-    </script>
-  </body>
-</html>"""
-    return page, 200
-
-@app.route('/countries')
+@app.route('/countries', methods=['GET'])
 def list_countries():
-    page = """
-        <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Team 3 Countries/Capitals</title>
-        <meta content="text/html; charset="UTF-8">
-      </head>
-      <body>
-        <h3>Team 3 Countries/Capitals</h3>"""
-    for entity in capital.get_all_countries():
-        page += '<br>' + entity['country'] + ', ' + entity['name']
-    page += """
-      </body>
-    </html>"""
-    return page, 200
+    results = capital.get_all_countries()
+    return render_template('countries.html', comment=None, results=results)
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
@@ -99,7 +38,6 @@ def get_status():
     status['pubsub'] = True
     status['storage'] = True
     return jsonify(status), 200
-
 
 @app.route('/api/capitals/<id>', methods=['DELETE'])
 def delete(id):
@@ -179,8 +117,6 @@ def publish(id):
        utility.log_info(topicName)
        client = pubsub.Client(project=projectName)
        topic = client.topic(topicName)
-
-
        if topic.exists():
            text = json.dumps(entity)
            encoded = text.encode('utf-8')
@@ -217,9 +153,6 @@ def store(id):
             return not_found_error('Capital records not found')
     except Exception as ex:
         return server_error('Unexpected error')
-
-def get_topic(topicName):
-    return None
 
 def ok_message(msg):
     okMessage = {}

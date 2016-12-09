@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team 3 Countries/Capitals</title>
+</head>
+<body>
+{% if results %}
+    <P><H2>There are {{ results|length }} Countries/Capitals in the datastore:</H2></P>
+    {% for result in results %}
+         {{ result.country + ', ' + result.name }}
+         <BR>
+    {% endfor %}
+{% endif %}
+</body>
+</html>
